@@ -1,0 +1,253 @@
+{
+  "name": "AI-Powered Multi-Tool Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -96
+      ],
+      "id": "7e51ddee-5c6a-471e-b06e-dc4741c38ea7",
+      "name": "Telegram Trigger",
+      "webhookId": "754ae497-ec46-4ac9-ae62-e1f07b321909",
+      "credentials": {
+        "telegramApi": {
+          "id": "s1YzoEC77ofOzCDJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are an intelligent AI assistant that helps users via Telegram.\nYou are talking to {{ $json.message.from.first_name }}{{ $json.message.from.last_name }}\n\n# Behavior\nYou should:\n- Understand the user's intent clearly.\n- Choose the correct tool from the available ones ONLY when needed.\n- Otherwise, answer directly.\n\n# Available Tools & When to Use Them:\n\n## 1. Google Gemini Chat Model\nUse for:\n- Natural conversations\n- Creative writing\n- Open-ended questions\n- Explaining concepts\n- General text generation\n\n## 2. SerpAPI\nUse for:\n- Real-time or factual information from the web\n- News, current events, live sports, current prices\n- Anything requiring recent or external data\n\nWhen using the SerpAPI tool, always structure the call like:\nUse tool SerpAPI with input:\n{\n  \"\"q\"\": \"\"search your query here\"\"\n}\n\n## 3. Calculator\nUse for:\n- Arithmetic\n- Percentages\n- Unit conversions\n- Date or time differences\n\nOnly use if the question involves numbers or calculations. Examples:\n- \"\"What is 40% of 500?\"\"\n- \"\"Convert 20 km to miles\"\"\n\n\n# 4. Wikipedia\nUse for:\n- When searching for a person or company\n\n# 5. Google Calender\nUse for:\n- When creating a calender event\n- Deleting or modifying calender events"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        160,
+        -96
+      ],
+      "id": "388039d2-35c1-42e1-912e-46534a40f3e6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        160,
+        128
+      ],
+      "id": "487cf482-9141-4896-8fef-c0b9b4e585db",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        752,
+        -96
+      ],
+      "id": "b7ace2fd-9ddb-45bc-a423-45e2dc41c2a4",
+      "name": "Send a text message",
+      "webhookId": "204c75f0-e05f-4df8-8d67-7290a1eabb15",
+      "credentials": {
+        "telegramApi": {
+          "id": "s1YzoEC77ofOzCDJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "6732713969"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        32,
+        128
+      ],
+      "id": "0e7f77ca-a7b3-4062-88ab-3208ad550b4d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        288,
+        128
+      ],
+      "id": "aec7ad68-92ad-439b-a9bb-bfbc7628389b",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://backend.composio.dev/v3/mcp/84938d1d-5d5f-4030-8133-0b2acfac3b2a/mcp?user_id=pg-test-3a54223f-1c29-4d1f-8929-83a288e53faf",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        128
+      ],
+      "id": "7e24a22d-9362-4350-88b7-935c338baae8",
+      "name": "Google Calendar"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://backend.composio.dev/v3/mcp/55fe2703-53ee-46df-938a-9669a92b578d/mcp?user_id=pg-test-3a54223f-1c29-4d1f-8929-83a288e53faf",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        128
+      ],
+      "id": "7bd97fc0-1507-4ad3-8fec-6fc73e666815",
+      "name": "Serp Api"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        128
+      ],
+      "id": "8ec974d4-ca42-4276-bead-0924c6a72a50",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Je2fCfLAamUkeJob",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Serp Api": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "b8bb3e95-f45c-4d86-b4d4-4c59786fa72a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d6ead334f7d9d3e3cc03fb9f4740cef1f05526dea96f70160331bd1ac9ce176a"
+  },
+  "id": "6WLQXDs_6XwjM0oxCJoYD",
+  "tags": []
+}
